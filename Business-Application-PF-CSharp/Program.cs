@@ -1,9 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Business_Application_PF_CSharp.BL;
 
 namespace Business_Application_PF_CSharp
@@ -20,19 +17,21 @@ namespace Business_Application_PF_CSharp
             {
                 Console.Clear();
                 option = Menu();
+                Console.Clear();
 
                 if (option == 1)
                 {
-                    AddItem(items);
-                    WriteData(items);
+                    Console.WriteLine("DARWAZA.PK > Seller > Add Item\n");
+                    Item item = AddItem(items);
+                    items.Add(item);
+                    Console.Write("\nItem Added Successfully...");
+                    WriteData(item);
                 }
                 else if (option == 2)
                 {
-                    Console.Clear();
                     Console.WriteLine("DARWAZA.PK > Seller > Display Items\n");
                     DisplayItems(items);
                     Console.Write("\n\nPress any key to continue...");
-                    Console.ReadKey();
                 }
                 else if (option == 3)
                 {
@@ -48,6 +47,7 @@ namespace Business_Application_PF_CSharp
                 {
                     onMainMenu = false;
                 }
+                Console.ReadKey();
             }
         }
 
@@ -91,21 +91,17 @@ namespace Business_Application_PF_CSharp
         }
 
 
-        static void AddItem(List<Item> items)
+        static Item AddItem(List<Item> items)
         {
-            Item item = new Item();
             Console.Clear();
-            Console.WriteLine("DARWAZA.PK > Seller > Add Item\n");
             Console.Write("Item Name: ");
-            item.name = Console.ReadLine();
+            string name = Console.ReadLine();
             Console.Write("Item Price: ");
-            item.price = float.Parse(Console.ReadLine());
+            float price = float.Parse(Console.ReadLine());
             Console.Write("Item Quantity: ");
-            item.quantity = int.Parse(Console.ReadLine());
-            items.Add(item);
-            
-            Console.Write("\nItem Added Successfully...");
-            Console.ReadKey();
+            int quantity = int.Parse(Console.ReadLine());
+            Item item = new Item(name, price, quantity);
+            return item;
         }
 
         static void DisplayItems(List<Item> items)
@@ -128,7 +124,6 @@ namespace Business_Application_PF_CSharp
         static void RemoveItem(List<Item> items)
         {
             string option;
-            Console.Clear();
             Console.WriteLine("DARWAZA.PK > Seller > Remove Item\n");
             DisplayItems(items);
             Console.WriteLine("\n");
@@ -142,13 +137,11 @@ namespace Business_Application_PF_CSharp
             int index =  int.Parse(option) - 1;
             items.RemoveAt(index);
             Console.Write("\nItem Removed Successfully...");
-            Console.ReadKey();
         }
 
         static void UpdateItem(List<Item> items)
         {
             string option;
-            Console.Clear();
             Console.WriteLine("DARWAZA.PK > Seller > Update Item\n");
             DisplayItems(items);
             Console.WriteLine("\n");
@@ -175,14 +168,12 @@ namespace Business_Application_PF_CSharp
             items[index].price = itemPrice;
             items[index].quantity = itemQuantity;
             Console.Write("\nItem Updated Successfully...");
-            Console.ReadKey();
         }
 
-        static void WriteData(List<Item> items)
+        static void WriteData(Item item)
         {
-            int itemCount = items.Count;
             StreamWriter fileVariable;
-            string path = "D:\\UET-Tasks\\OOP\\Business-Application-PF-CSharp\\Business-Application-PF-CSharp\\data.csv";
+            string path = "../../data.csv";
             if (File.Exists(path))
             {
                 fileVariable = new StreamWriter(path, true);
@@ -190,13 +181,13 @@ namespace Business_Application_PF_CSharp
             {
                 fileVariable = new StreamWriter(path);
             }
-            fileVariable.WriteLine("{0},{1},{2}", items[itemCount - 1].name, items[itemCount - 1].price, items[itemCount - 1].quantity);
+            fileVariable.WriteLine("{0},{1},{2}", item.name, item.price, item.quantity);
             fileVariable.Close();
         }
 
         static void RewriteData(List<Item> items)
         {
-            string path = "D:\\UET-Tasks\\OOP\\Business-Application-PF-CSharp\\Business-Application-PF-CSharp\\data.csv";
+            string path = "../../data.csv";
             StreamWriter fileVariable = new StreamWriter(path);
             for (int i = 0; i < items.Count; i++)
             {
@@ -215,10 +206,10 @@ namespace Business_Application_PF_CSharp
                 while ((record = fileVariable.ReadLine()) != null)
                 {
                     string[] rawData = record.Split(',');
-                    Item item = new Item();
-                    item.name = rawData[0];
-                    item.quantity = int.Parse(rawData[1]);
-                    item.price = int.Parse(rawData[2]);
+                    string name = rawData[0];
+                    float price = float.Parse(rawData[1]);
+                    int quantity = int.Parse(rawData[2]);
+                    Item item = new Item(name, price, quantity);
                     items.Add(item);
                 }
                 fileVariable.Close();
